@@ -18,9 +18,8 @@ def activation_quant(x: Tensor):
 
 
 def weight_quant(w: Tensor):
-    scale = w.abs().mean()
-    e = w.mean()
-    u = (w - e).sign() * scale
+    scale = 1.0 / w.abs().mean().clamp_(min=0.00001)
+    u = (w * scale).round().clamp_(-1, 1) / scale
     return u
 
 
